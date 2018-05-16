@@ -43,8 +43,7 @@ to solving the problem. We're looking for a solution that is representative of
 code that you would write on a real project. You can complete this at your
 convenience — there isn't a specific deadline for it.
 
-Problem Statement
-=================
+## Problem Statement
 
 MBX builds single page applications (SPAs) using Angular that rely heavily on
 our API.  Because of the number of times we need to make calls out to the API,
@@ -61,12 +60,11 @@ your URL matches what is expected.
 While we greatly simplify what the client library is expected to do in this
 problem, we do want the code to be written so it's extendable in the future.
 
-Running the Tests
-=================
+## Running the Tests
 
 To run the tests, run the following in the root directory of the project
 
-```
+```script
 npm install
 npm test
 ```
@@ -75,17 +73,16 @@ While you may choose any language to solve this problem that can be run within t
 javascript world (e.g. TypeScript), our one requirement is that your solution can
 still be run with:
 
-```
+```script
 npm install
 npm test
 ```
 
-Endpoints
-=========
+## Endpoints
 
 The API has many endpoints that can be called.  In this example, we have 3 endpoints:
 
-```
+```script
 /items
 /customers
 /employees
@@ -94,16 +91,14 @@ The API has many endpoints that can be called.  In this example, we have 3 endpo
 It is expected that the number of endpoints will be closer to 100 in the future, so adding
 new endpoints shouldn't take too much effort.
 
-Features of the API
-===================
+## Features of the API
 
-Paging
-------
+### Paging
 
 The API supports simple paging by passing in the parameters limit and offset.  For example,
 if you have a page size of 10 and want the 3rd page, you would pass in the parameters:
 
-```
+```script
 /endpoint?limit=10&offset=20
 ```
 
@@ -112,17 +107,18 @@ In these cases, don't pass in a limit or offset parameter.  The API will handle 
 for you.
 
 Use the default offset but limit to 10 results:
-```
+
+```script
 /endpoint?limit=10
 ```
 
 Use the default limit but offset by 10 results:
-```
+
+```script
 /endpoint?offset=10
 ```
 
-Filtering
----------
+### Filtering
 
 The API supports filtering the results using standard operators (=, >, <, >=, <=, etc.). In
 this test, we only expect two to be defined in the client library, however, we expect that the code
@@ -133,7 +129,7 @@ is able to be extended in the future to the full suite of operators.
 To check if a field is less than a value, use the 'lt' parameter.  For example, if we want to
 find all items with a price less than $1000, we would call this:
 
-```
+```bash
 /items?price_lt=1000
 ```
 
@@ -142,7 +138,7 @@ find all items with a price less than $1000, we would call this:
 To check if a field is greater than or equal to a value, use the 'gte' parameter.  For example, if we want to
 find all items with a price greater than or equal to $100, we would call this:
 
-```
+```script
 /items?price_gte=100
 ```
 
@@ -151,7 +147,7 @@ find all items with a price greater than or equal to $100, we would call this:
 A request can include multiple parameters.  To do that, join all the parameters using ampersands (&) like
 a standard GET request.
 
-```
+```script
 /items?price_gte=100&price_lt=1000&limit=10&offset=20
 ```
 
@@ -160,8 +156,7 @@ a standard GET request.
 * Limit to 10 results per page
 * Offset the results by 20 (3rd page)
 
-Expectations and Evaluation Criteria
-====================================
+## Expectations and Evaluation Criteria
 
 As experienced software engineers know, there's a wide variety of solutions to
 any problem. Interview coding problems can be especially unclear about
