@@ -4,9 +4,11 @@ enum Endpoint {
   employees
 }
 
+type Parameter = [string, number];
+
 export class API {
 
-  get(endpoint: Endpoint, options: any) {
+  get(endpoint: Endpoint, parameters?: Parameter[]) {
 
   }
 }
