@@ -1,18 +1,40 @@
-import { API } from './api';
+import { TestBed } from '@angular/core/testing';
+
+import { API, Endpoint } from './api';
+
+beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        API
+      ],
+    }).compileComponents();
+  });
 
 describe('API', () => {
   it('should build the url for the employees endpoint', () => {
-    const url = '';
+    let url = '';
+
+    const api = new API();
+    url = api.get(Endpoint.employees);
+
     expect(url).toBe('/employees');
  });
 
  it('should build the url for the customers endpoint', () => {
-     const url = '';
+     let url = '';
+
+     const api = new API();
+     url = api.get(Endpoint.customers);
+
      expect(url).toBe('/customers');
  });
 
  it('should build the url for the items endpoint', () => {
-     const url = '';
+     let url = '';
+
+     const api = new API();
+     url = api.get(Endpoint.items);
+
      expect(url).toBe('/items');
  });
 
