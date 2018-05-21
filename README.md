@@ -2,25 +2,15 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.4.
 
-## Development server
+## Installation
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Install [Node.js](https://nodejs.org/) and the Node Package Manager. Node version 7.10.1 or greater and NPM version 4.2.0 or greater.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Download or clone this project to your local machine. Run `npm install` to get the necessary libraries to run the tests.
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Run `npm test` or `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## Further help
 
@@ -28,161 +18,40 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ===================================================
 
-For the last step of the interview process, we'd like to have you write a
-little bit of code. We've tried to keep the problem statement minimal so that
-it shouldn't take too much time.
+## How API interface works
 
-If you have any questions please send Mark Glenn an email at mark.glenn@mbx.com. If
-the problem statement doesn't specify something, you can make any decision that
-you want. Your code will not be evaluated on its ability to handle anything
-that wasn't mentioned in the problem statement. You do not need to make any network
-calls.
+The problem we needed to solve was to create an abstract for the developers to call different API endpoints, with optional parameters, to retrieve data for the web app. This interface needed to be flexible to accomodate up to 100 endpoints and be able to pass various different parameters that would also be extendable in the future.
 
-Please include an updated README with your submission describing your approach
-to solving the problem. We're looking for a solution that is representative of
-code that you would write on a real project. You can complete this at your
-convenience — there isn't a specific deadline for it.
+The API abstract was implemented as a service that could be injected into a component that needs it. Once the API service is injected, all you would need to provide for a simple GET method would be two parameters:
 
-## Problem Statement
+* An Endpoints enum that would define and enforce the multiple endpoints.
+* An array of Parameter, which is a type consisting of a `string`, `number` tuple. This information is **optional**.
 
-MBX builds single page applications (SPAs) using Angular that rely heavily on
-our API.  Because of the number of times we need to make calls out to the API,
-we need a simple interface to it in Javascript.
-
-MBX would like you to implement an interface to a simplified version of the MBX
-API.  We have left the requirements very vague to allow you freedom in your
-design.  Our only requirement is that it should pass all 8 tests in the
-/src/api.spec.js file.
-
-Your code should be used to generate a URL path string.  The tests will see if
-your URL matches what is expected.
-
-While we greatly simplify what the client library is expected to do in this
-problem, we do want the code to be written so it's extendable in the future.
-
-## Running the Tests
-
-To run the tests, run the following in the root directory of the project
-
-```script
-npm install
-npm test
+```code
+ api.get(Endpoint, Parameter[]);
 ```
 
-While you may choose any language to solve this problem that can be run within the
-javascript world (e.g. TypeScript), our one requirement is that your solution can
-still be run with:
+The enum is required and can be easily extended in the future by simply adding a new value to the enumerator. TypeScript provides value checking for the different options one can pass.
 
-```script
-npm install
-npm test
+```code
+export enum Endpoint {
+  items,
+  customers,
+  employees
+}
 ```
 
-## Endpoints
+After getting the enum string name, we then need to check if the parameter array is passed in as well. If the parameter array is not undefined, then we call a function called `stringifyParams` that converts the array of tuples to a string and appends them to the request url.
 
-The API has many endpoints that can be called.  In this example, we have 3 endpoints:
+```code
+function stringifyParams(params: Parameter[]): string {
+  let stringParams = '?';
+  params.forEach((item) => {
+    stringParams += `${item[0]}=${item[1]}&`;
+  });
 
-```script
-/items
-/customers
-/employees
+  return stringParams.slice(0, -1);
+}
 ```
 
-It is expected that the number of endpoints will be closer to 100 in the future, so adding
-new endpoints shouldn't take too much effort.
-
-## Features of the API
-
-### Paging
-
-The API supports simple paging by passing in the parameters limit and offset.  For example,
-if you have a page size of 10 and want the 3rd page, you would pass in the parameters:
-
-```script
-/endpoint?limit=10&offset=20
-```
-
-The client should allow using defaults for limit or offset if one or the other is not given.
-In these cases, don't pass in a limit or offset parameter.  The API will handle the defaults
-for you.
-
-Use the default offset but limit to 10 results:
-
-```script
-/endpoint?limit=10
-```
-
-Use the default limit but offset by 10 results:
-
-```script
-/endpoint?offset=10
-```
-
-### Filtering
-
-The API supports filtering the results using standard operators (=, >, <, >=, <=, etc.). In
-this test, we only expect two to be defined in the client library, however, we expect that the code
-is able to be extended in the future to the full suite of operators.
-
-### lt
-
-To check if a field is less than a value, use the 'lt' parameter.  For example, if we want to
-find all items with a price less than $1000, we would call this:
-
-```bash
-/items?price_lt=1000
-```
-
-### gte
-
-To check if a field is greater than or equal to a value, use the 'gte' parameter.  For example, if we want to
-find all items with a price greater than or equal to $100, we would call this:
-
-```script
-/items?price_gte=100
-```
-
-## Multiple parameters
-
-A request can include multiple parameters.  To do that, join all the parameters using ampersands (&) like
-a standard GET request.
-
-```script
-/items?price_gte=100&price_lt=1000&limit=10&offset=20
-```
-
-* Price is greater than or equal to 100
-* Price is less than 1000
-* Limit to 10 results per page
-* Offset the results by 20 (3rd page)
-
-## Expectations and Evaluation Criteria
-
-As experienced software engineers know, there's a wide variety of solutions to
-any problem. Interview coding problems can be especially unclear about
-expectations as the tasks can range from a quick fizz buzz screening problem to
-fully fledged applications. Although we've given a relatively simple problem to
-solve, we're looking for you to implement enough code to demonstrate expertise
-with domain modeling and testing.
-
-We're interested in the thought process behind your choices, so please take
-some time to capture that in your README. For example, you can represent your
-library using classes, functions, or objects. We don't consider any one of
-those options better than the others. However, we expect you to make an
-intentional choice, implement it consistently, and communicate why you chose
-that approach.
-
-In general, we're looking for a little more structure than what the problem
-actually necessitates. Although we understand the principle of YAGNI and the
-desire to keep code simple, we didn't want to add so many requirements to this
-exercise that it'd take a massive amount of time. Don't go overboard with this
-— we don't want to see a complex overabundance of abstraction. We also don't
-want to see all of the code in a single function, even though this problem is
-simple enough to reasonably implement it that way.
-
-We'll be evaluating solutions on:
-
-* object modeling / software design
-* testing approach
-* use of language idioms relative to expertise with that language
-* thought process captured in the README
+We are appending the parameters and values to the url by using the ampersand (&). This function can append as many parameters to the url string as needed.
