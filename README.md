@@ -1,4 +1,4 @@
-# MbxCodeTest
+# API Interface Example using TypeScript
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.4.
 
@@ -18,22 +18,26 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ===================================================
 
-## How API interface works
+## Description of the problem
 
-The problem we needed to solve was to create an abstract for the developers to call different API endpoints, with optional parameters, to retrieve data for the web app. This interface needed to be flexible to accomodate up to 100 endpoints and be able to pass various different parameters that would also be extendable in the future.
+_**May 26, 2018 Update**_: _Removed abstraction as a service. No need to add in the module providers._
 
-The API abstract was implemented as a service that could be injected into a component that needs it. Once the API service is injected, all you would need to provide for a simple GET method would be two parameters:
+The problem we needed to solve was to create an interface for the developers to call different API endpoints, with optional parameters, to retrieve data for the web app. This interface needed to be flexible to accomodate up to 100 endpoints and be able to pass various different parameters that would also be extendable in the future.
+
+The API interface defines the `get` function signature. We implement the API interface in a class.  What you would need to provide for the GET function would be two parameters:
 
 * An Endpoints enum that would define and enforce the multiple endpoints.
 * An array of Parameter, which is a type consisting of a `string`, `number` tuple. This information is **optional**.
 
-```code
- api.get(Endpoint, Parameter[]);
+```typescript
+interface APIInterface {
+  get(endpoint: Endpoint, parameters?: Parameter[]): string;
+}
 ```
 
 The enum is required and can be easily extended in the future by simply adding a new value to the enumerator. TypeScript provides value checking for the different options one can pass.
 
-```code
+```typescript
 export enum Endpoint {
   items,
   customers,
@@ -41,9 +45,27 @@ export enum Endpoint {
 }
 ```
 
-After getting the enum string name, we then need to check if the parameter array is passed in as well. If the parameter array is not undefined, then we call a function called `stringifyParams` that converts the array of tuples to a string and appends them to the request url.
+## How the API Interface is Implemented
 
-```code
+Here is the class that implements the `get` function signature in the interface. Let's describe the class:
+
+```typescript
+class API implements APIInterface {
+  get(endpoint: Endpoint, parameters?: Parameter[]): string {
+    let url = '/';
+    url += Endpoint[endpoint];
+    if (parameters !== undefined) {
+      url += stringifyParams(parameters);
+    }
+
+    return url;
+  }
+}
+```
+
+After getting the enum string name, and starting the new we then need to check if the parameter array is passed in as well. If the parameter array is not undefined, then we call a function called `stringifyParams` that converts the array of tuples to a string and appends them to the request url.
+
+```typescript
 function stringifyParams(params: Parameter[]): string {
   let stringParams = '?';
   params.forEach((item) => {
@@ -54,4 +76,4 @@ function stringifyParams(params: Parameter[]): string {
 }
 ```
 
-We are appending the parameters and values to the url by using the ampersand (&). This function can append as many parameters to the url string as needed.
+We are appending the parameters and values to the url by using the ampersand (&). This function can append as many parameters to the url string as needed. From here, you can use the resulting string to feed it to an actual HTTP service or do other manipulation.

@@ -1,14 +1,4 @@
-import { TestBed } from '@angular/core/testing';
-
 import { API, Endpoint, Parameter } from './api';
-
-beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        API
-      ],
-    }).compileComponents();
-  });
 
 describe('API', () => {
   it('should build the url for the employees endpoint', () => {
@@ -87,7 +77,6 @@ describe('API', () => {
          ['limit', 10],
          ['offset', 20],
      ];
-
      const api = new API();
      url = api.get(Endpoint.items, params);
 
